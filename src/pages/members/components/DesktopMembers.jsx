@@ -3,6 +3,7 @@ import { useMode } from '../../../contexts/ModeContext';
 import { useConfirm } from '../../../contexts/ConfirmContext';
 import AnimatedContent from '../../../components/ui/AnimatedContent';
 import BorderGlow from '../../../components/ui/BorderGlow';
+import { useGlowConfig } from '../../../hooks/useGlowConfig';
 import { Users, UserPlus, Trash2, Mail, Shield, Eye, Pencil, ChevronDown, Clock, CheckCircle2, Loader2 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
@@ -152,13 +153,7 @@ export default function DesktopMembers() {
     });
   };
 
-  // BorderGlow config — always dark card background
-  const glowConfig = {
-    backgroundColor: '#060010',
-    glowColor: '40 80 80',
-    glowIntensity: 3,
-    colors: ['#c084fc', '#f472b6', '#38bdf8'],
-  };
+  const glowConfig = useGlowConfig('desktop');
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
@@ -175,18 +170,8 @@ export default function DesktopMembers() {
       </AnimatedContent>
 
       {/* Invite Form with BorderGlow */}
-      <AnimatedContent direction="vertical" delay={100}>
-        <BorderGlow
-          edgeSensitivity={30}
-          glowColor={glowConfig.glowColor}
-          backgroundColor={glowConfig.backgroundColor}
-          borderRadius={20}
-          glowRadius={80}
-          glowIntensity={glowConfig.glowIntensity}
-          coneSpread={45}
-          animated={false}
-          colors={glowConfig.colors}
-        >
+      <AnimatedContent direction="vertical" delay={100} className="relative z-10">
+        <BorderGlow {...glowConfig}>
           <div className="p-5">
             <h2 className="font-semibold text-sm mb-4 flex items-center gap-2">
               <UserPlus className="w-4 h-4" /> Undang Anggota Baru
@@ -251,38 +236,20 @@ export default function DesktopMembers() {
           ) : error ? (
             <div className="p-12 text-center text-red-500">Gagal memuat data</div>
           ) : members.length === 0 ? (
-            <BorderGlow
-              edgeSensitivity={30}
-              glowColor={glowConfig.glowColor}
-              backgroundColor={glowConfig.backgroundColor}
-              borderRadius={20}
-              glowRadius={80}
-              glowIntensity={glowConfig.glowIntensity}
-              coneSpread={45}
-              animated={false}
-              colors={glowConfig.colors}
-            >
-              <div className="p-12 text-center text-muted-foreground">
-                <Users className="w-14 h-14 mx-auto mb-3 opacity-30" />
-                <p className="font-medium">Belum ada anggota tim</p>
-                <p className="text-sm mt-1">Undang rekan kerjamu untuk mulai berkolaborasi</p>
-              </div>
-            </BorderGlow>
+            <AnimatedContent direction="vertical" delay={200}>
+              <BorderGlow {...glowConfig}>
+                <div className="p-12 text-center text-muted-foreground">
+                  <Users className="w-14 h-14 mx-auto mb-3 opacity-30" />
+                  <p className="font-medium">Belum ada anggota tim</p>
+                  <p className="text-sm mt-1">Undang rekan kerjamu untuk mulai berkolaborasi</p>
+                </div>
+              </BorderGlow>
+            </AnimatedContent>
           ) : (
             <div className="space-y-3">
               {members.map((member, i) => (
                 <AnimatedContent key={member.id} direction="vertical" delay={250 + i * 60}>
-                  <BorderGlow
-                    edgeSensitivity={30}
-                    glowColor={glowConfig.glowColor}
-                    backgroundColor={glowConfig.backgroundColor}
-                    borderRadius={20}
-                    glowRadius={80}
-                    glowIntensity={glowConfig.glowIntensity}
-                    coneSpread={45}
-                    animated={false}
-                    colors={glowConfig.colors}
-                  >
+                  <BorderGlow {...glowConfig}>
                     <div className="flex items-center justify-between p-4">
                       <div className="flex items-center gap-3">
                         <div className="w-11 h-11 rounded-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-violet-600 text-white font-bold text-sm shadow-lg shadow-blue-500/20">

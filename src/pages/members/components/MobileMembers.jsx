@@ -3,6 +3,7 @@ import { useMode } from '../../../contexts/ModeContext';
 import { useConfirm } from '../../../contexts/ConfirmContext';
 import AnimatedContent from '../../../components/ui/AnimatedContent';
 import BorderGlow from '../../../components/ui/BorderGlow';
+import { useGlowConfig } from '../../../hooks/useGlowConfig';
 import { Users, UserPlus, Mail, Trash2, Eye, Pencil, Shield, ChevronDown, Clock, CheckCircle2, Loader2 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
@@ -102,12 +103,7 @@ export default function MobileMembers() {
     });
   };
 
-  const glowConfig = {
-    backgroundColor: '#060010',
-    glowColor: '40 80 80',
-    glowIntensity: 3,
-    colors: ['#c084fc', '#f472b6', '#38bdf8'],
-  };
+  const glowConfig = useGlowConfig('mobile');
 
   return (
     <div className="p-4 space-y-4">
@@ -122,17 +118,7 @@ export default function MobileMembers() {
 
       {/* Invite Form */}
       <AnimatedContent direction="vertical" delay={100}>
-        <BorderGlow
-          edgeSensitivity={30}
-          glowColor={glowConfig.glowColor}
-          backgroundColor={glowConfig.backgroundColor}
-          borderRadius={16}
-          glowRadius={60}
-          glowIntensity={glowConfig.glowIntensity}
-          coneSpread={45}
-          animated={false}
-          colors={glowConfig.colors}
-        >
+        <BorderGlow {...glowConfig}>
           <form onSubmit={handleInvite} className="p-4 space-y-3">
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -185,17 +171,7 @@ export default function MobileMembers() {
         <div className="p-8 text-center text-red-500 text-sm">Gagal memuat</div>
       ) : members.length === 0 ? (
         <AnimatedContent direction="vertical" delay={200}>
-          <BorderGlow
-            edgeSensitivity={30}
-            glowColor={glowConfig.glowColor}
-            backgroundColor={glowConfig.backgroundColor}
-            borderRadius={16}
-            glowRadius={60}
-            glowIntensity={glowConfig.glowIntensity}
-            coneSpread={45}
-            animated={false}
-            colors={glowConfig.colors}
-          >
+          <BorderGlow {...glowConfig}>
             <div className="p-8 text-center text-muted-foreground">
               <Users className="w-10 h-10 mx-auto mb-2 opacity-30" />
               <p className="text-sm font-medium">Belum ada anggota</p>
@@ -207,17 +183,7 @@ export default function MobileMembers() {
         <div className="space-y-2.5">
           {members.map((member, i) => (
             <AnimatedContent key={member.id} direction="vertical" delay={200 + i * 60}>
-              <BorderGlow
-                edgeSensitivity={30}
-                glowColor={glowConfig.glowColor}
-                backgroundColor={glowConfig.backgroundColor}
-                borderRadius={16}
-                glowRadius={60}
-                glowIntensity={glowConfig.glowIntensity}
-                coneSpread={45}
-                animated={false}
-                colors={glowConfig.colors}
-              >
+              <BorderGlow {...glowConfig}>
                 <div className="p-3.5 flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-violet-600 text-white font-bold text-sm shadow-lg shadow-blue-500/20 shrink-0">
                     {(member.name || member.email || '?')[0].toUpperCase()}

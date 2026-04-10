@@ -15,23 +15,13 @@ import { formatDate } from "@/utils/date";
 import { useAuth } from "@/contexts/AuthContext";
 import AnimatedContent from "@/components/ui/AnimatedContent";
 import BorderGlow from "@/components/ui/BorderGlow";
-
-const GLOW = {
-  edgeSensitivity: 30,
-  glowColor: '40 80 80',
-  backgroundColor: '#060010',
-  borderRadius: 16,
-  glowRadius: 60,
-  glowIntensity: 3,
-  coneSpread: 45,
-  animated: false,
-  colors: ['#c084fc', '#f472b6', '#38bdf8'],
-};
+import { useGlowConfig } from "@/hooks/useGlowConfig";
 
 export default function MobileDashboard() {
   const { mode } = useMode();
   const { user } = useAuth();
   const { summary, chartData, recentActivity, loading } = useDashboardData();
+  const GLOW = useGlowConfig('mobile');
   const userName = user?.full_name?.split(' ')[0] || 'User';
 
   if (loading) {

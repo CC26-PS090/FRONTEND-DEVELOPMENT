@@ -15,22 +15,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import AnimatedContent from "@/components/ui/AnimatedContent";
 import BorderGlow from "@/components/ui/BorderGlow";
-
-const GLOW = {
-  edgeSensitivity: 30,
-  glowColor: '40 80 80',
-  backgroundColor: '#060010',
-  borderRadius: 20,
-  glowRadius: 80,
-  glowIntensity: 3,
-  coneSpread: 45,
-  animated: false,
-  colors: ['#c084fc', '#f472b6', '#38bdf8'],
-};
+import { useGlowConfig } from "@/hooks/useGlowConfig";
 
 export default function MobileInsights() {
   const { mode } = useMode(); 
   const { summary, chartData, categoryData, recentActivity, loading } = useDashboardData();
+  const GLOW = useGlowConfig('mobile');
   const isPersonal = mode === 'personal';
   const activeData = categoryData.length > 0 ? categoryData : [{ name: 'Belum ada data', value: 100, color: '#cbd5e1' }];
   const totalExpense = summary.total_expense || 0;

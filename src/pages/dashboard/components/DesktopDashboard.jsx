@@ -10,25 +10,15 @@ import { transactionService } from "@/services/transaction.service";
 import { useAuth } from "@/contexts/AuthContext";
 import AnimatedContent from "@/components/ui/AnimatedContent";
 import BorderGlow from "@/components/ui/BorderGlow";
+import { useGlowConfig } from "@/hooks/useGlowConfig";
 import { toast } from "sonner";
-
-const GLOW = {
-  edgeSensitivity: 30,
-  glowColor: '40 80 80',
-  backgroundColor: '#060010',
-  borderRadius: 20,
-  glowRadius: 80,
-  glowIntensity: 3,
-  coneSpread: 45,
-  animated: false,
-  colors: ['#c084fc', '#f472b6', '#38bdf8'],
-};
 
 export default function DesktopDashboard() {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
   const [isScanning, setIsScanning] = useState(false);
   const { user } = useAuth();
+  const GLOW = useGlowConfig('desktop');
   const { summary, chartData, sparklineBalance, sparklineIncome, sparklineExpense, categoryData, recentActivity, loading, incomeChange, expenseChange, balanceChange, healthScore, healthLabel } = useDashboardData();
   const currentLocale = "id-ID";
   const userName = user?.full_name?.split(' ')[0] || 'User';
