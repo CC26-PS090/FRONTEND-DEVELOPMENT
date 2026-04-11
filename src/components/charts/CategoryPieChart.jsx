@@ -1,5 +1,22 @@
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Label } from "recharts";
 import { useMode } from "@/contexts/ModeContext";
+import { formatIDR } from "@/utils/currency";
+
+const CustomTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    const entry = payload[0];
+    return (
+      <div className="bg-card border border-border p-3 rounded-xl shadow-lg">
+        <div className="flex items-center gap-2 text-sm">
+          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.payload.color || entry.color }} />
+          <span className="font-medium text-foreground">{entry.name} :</span>
+          <span className="font-bold text-foreground">{formatIDR(entry.value)}</span>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
 
 /**
  * Donut pie chart for category distribution with a centered label.
@@ -34,16 +51,7 @@ export default function CategoryPieChart({ data }) {
             style={{ fontSize: '12px', fontWeight: 'bold' }}
           />
         </Pie>
-        <Tooltip
-          contentStyle={{
-            backgroundColor: 'var(--card)',
-            borderColor: 'var(--border)',
-            color: 'var(--foreground)',
-            borderRadius: '8px',
-            fontSize: '12px',
-          }}
-          itemStyle={{ color: 'var(--foreground)' }}
-        />
+        <Tooltip content={<CustomTooltip />} cursor={{fill: 'transparent'}} />
       </PieChart>
     </ResponsiveContainer>
   );

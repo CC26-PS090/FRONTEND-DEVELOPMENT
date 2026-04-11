@@ -89,14 +89,14 @@ export default function MobilePOS() {
   };
 
   return (
-    <div className="p-4 space-y-4 pb-24">
+    <div className="p-4 space-y-4 pb-40 overflow-x-hidden">
       <AnimatedContent direction="vertical" delay={0}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ShoppingCart className={`w-6 h-6 text-${accentColor}-600`} />
             <h1 className="text-xl font-bold">Kasir</h1>
           </div>
-          <div className="flex border border-border rounded-xl overflow-hidden bg-card shadow-sm">
+          <div className="flex border border-border rounded-xl overflow-hidden bg-card shadow-sm mr-24">
             <button 
               onClick={() => setIsEditingMode(!isEditingMode)}
               className={`flex items-center justify-center w-10 h-9 transition-colors ${isEditingMode ? `bg-${accentColor}-100 dark:bg-${accentColor}-900/30 text-${accentColor}-600` : 'hover:bg-accent text-muted-foreground'}`}
@@ -170,7 +170,7 @@ export default function MobilePOS() {
       {cartCount > 0 && !showCart && (
         <button
           onClick={() => setShowCart(true)}
-          className={`fixed bottom-24 right-4 z-40 flex items-center gap-2 px-5 py-3 rounded-2xl text-white font-semibold shadow-xl bg-${accentColor}-600 active:scale-95 transition-transform`}
+          className={`fixed bottom-28 right-4 z-40 flex items-center gap-2 px-5 py-3 rounded-2xl text-white font-semibold shadow-xl bg-${accentColor}-600 active:scale-95 transition-transform`}
         >
           <ShoppingCart className="w-5 h-5" />
           <span>{cartCount} item</span>
@@ -181,8 +181,8 @@ export default function MobilePOS() {
 
       {/* Cart Bottom Sheet */}
       {showCart && (
-        <div className="fixed inset-0 z-50 flex flex-col justify-end bg-black/40" onClick={() => setShowCart(false)}>
-          <div className="bg-card rounded-t-3xl max-h-[80vh] flex flex-col" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-[60] flex flex-col justify-end bg-black/40" onClick={() => setShowCart(false)}>
+          <div className="bg-card rounded-t-3xl max-h-[70vh] flex flex-col pb-28" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between p-4 border-b border-border">
               <h2 className="font-bold flex items-center gap-2">
                 <ShoppingCart className="w-4 h-4" /> Keranjang ({cartCount})

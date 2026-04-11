@@ -33,9 +33,9 @@ export default function DesktopInsights() {
   const trendData = chartData.map((curr, idx, arr) => {
     const prev = idx > 0 ? arr[idx - 1] : { expense: 0 };
     return {
-      name: curr.month,
-      lastMonth: Number(prev.expense),
-      thisMonth: Number(curr.expense)
+      name: curr.period,
+      lastPeriod: Number(prev.expense),
+      thisPeriod: Number(curr.expense)
     };
   });
 
@@ -147,10 +147,10 @@ export default function DesktopInsights() {
                 <div>
                   <h3 className={`text-base font-bold ${isPersonal ? 'text-purple-400' : 'text-blue-400'} mb-2`}>Smart Insight</h3>
                   <p className="text-sm opacity-90 leading-relaxed text-slate-300">
-                    Your highest expense this month is in the <span className="font-bold text-white">{getTranslatedCategory(activeData[0].name)}</span> category. 
+                    Pengeluaran terbesarmu bulan ini ada di kategori <span className="font-bold text-white">{getTranslatedCategory(activeData[0].name)}</span>. 
                     {isPersonal 
-                      ? " Try reducing outside dining to save more." 
-                      : " Ensure your product pricing covers these costs."}
+                      ? " Coba kurangi jajan di luar untuk berhemat." 
+                      : " Pastikan harga jual produkmu sudah menutupi modal ini."}
                   </p>
                 </div>
               </div>
@@ -161,8 +161,8 @@ export default function DesktopInsights() {
           <AnimatedContent distance={40} delay={0.3} direction="vertical" className="flex flex-col flex-1 min-h-[350px]">
             <BorderGlow {...GLOW} className="flex-1">
               <div className="p-6 flex flex-col flex-1">
-                <h3 className="text-base font-bold mb-1">Category Distribution</h3>
-                <p className="text-sm text-slate-400 mb-4">Based on {formatIDR(totalExpense)} total expenses</p>
+                <h3 className="text-base font-bold mb-1">Distribusi Kategori</h3>
+                <p className="text-sm text-slate-400 mb-4">Berdasarkan total biaya {formatIDR(totalExpense)}</p>
                 <div className="h-[220px] w-full mt-2">
                   <DistributionPieChart data={activeData} />
                 </div>
@@ -206,7 +206,7 @@ export default function DesktopInsights() {
                   <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden shadow-inner flex">
                     <div className="h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full" style={{ width: '70%' }}></div>
                   </div>
-                  <p className="text-[10px] text-slate-400 font-medium leading-relaxed">Great job! Your expenses are 15% lower this month (+50 XP). Keep it up!</p>
+                  <p className="text-[10px] text-slate-400 font-medium leading-relaxed">Kerja bagus! Pengeluaranmu lebih efisien minggu ini (+50 XP). Pertahankan!</p>
                 </div>
               </div>
             </BorderGlow>
@@ -220,12 +220,12 @@ export default function DesktopInsights() {
               <BorderGlow {...GLOW} className="flex-1">
                 <div className="p-6 flex flex-col flex-1">
                   <div className="flex justify-between items-center mb-1">
-                    <h3 className="text-base font-bold">Cash Flow Trend</h3>
+                    <h3 className="text-base font-bold">Grafik Keuangan</h3>
                     <div className="flex items-center gap-1 text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full">
-                      <TrendingDown className="w-3.5 h-3.5" /> 15% More Efficient
+                      <TrendingDown className="w-3.5 h-3.5" /> 15% Lebih Hemat
                     </div>
                   </div>
-                  <p className="text-sm text-slate-400 mb-4">This month vs Last month</p>
+                  <p className="text-sm text-slate-400 mb-4">Minggu ini vs Minggu lalu</p>
                   <div className="h-[220px] w-full flex-1">
                     <TrendBarChart data={trendData} />
                   </div>
@@ -239,7 +239,7 @@ export default function DesktopInsights() {
                 <div className="p-6 flex flex-col flex-1 justify-between">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-base font-bold flex items-center gap-2">
-                      <FileText className="w-5 h-5 text-blue-400" /> Monthly Report
+                      <FileText className="w-5 h-5 text-blue-400" /> Laporan Bulanan
                     </h3>
                     <span className="text-xs font-medium text-slate-400">
                       {new Date().toLocaleDateString('id-ID', { month: 'short', year: 'numeric' })}
@@ -247,18 +247,18 @@ export default function DesktopInsights() {
                   </div>
                   <div className="grid grid-cols-2 gap-4 border-b border-white/10 pb-5">
                     <div>
-                      <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-1.5 font-bold">INCOME</p>
+                      <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-1.5 font-bold">PEMASUKAN</p>
                       <p className="text-lg font-black text-emerald-400">{formatIDR(summary.total_income)}</p>
                     </div>
                     <div>
-                      <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-1.5 font-bold">EXPENSE</p>
+                      <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-1.5 font-bold">PENGELUARAN</p>
                       <p className="text-lg font-black text-rose-400">{formatIDR(summary.total_expense)}</p>
                     </div>
                   </div>
                   <div className="mt-4">
-                    <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-1 font-bold">Net Profit</p>
+                    <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-1 font-bold">Laba Bersih</p>
                     <p className="text-4xl font-black">{formatIDR(summary.profit_loss)}</p>
-                    <div className="inline-block bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-bold px-3 py-1.5 rounded-full mt-4">Real-Time Statistics</div>
+                    <div className="inline-block bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-bold px-3 py-1.5 rounded-full mt-4">Statistik Real-Time</div>
                   </div>
                 </div>
               </BorderGlow>
@@ -272,9 +272,9 @@ export default function DesktopInsights() {
                 <div className="p-6 flex flex-col flex-1">
                   <div className="mb-1">
                     <h3 className="text-base font-bold flex items-center gap-2">
-                      <Receipt className="w-5 h-5 text-slate-400" /> Top 5 Expenses
+                      <Receipt className="w-5 h-5 text-slate-400" /> 5 Pengeluaran Teratas
                     </h3>
-                    <p className="text-sm text-slate-400 mt-1">Highest spending this month</p>
+                    <p className="text-sm text-slate-400 mt-1">Yang paling bikin boros bulan ini</p>
                   </div>
                   <div className="space-y-3 mt-4 flex-1">
                     {topExpenses.map((trx, idx) => (
@@ -301,9 +301,9 @@ export default function DesktopInsights() {
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h3 className="text-base font-bold flex items-center gap-2">
-                        <Target className="w-5 h-5 text-rose-500" /> Category Budget
+                        <Target className="w-5 h-5 text-rose-500" /> Anggaran Kategori
                       </h3>
-                      <p className="text-sm text-slate-400 mt-1">Monitor your spending against limits.</p>
+                      <p className="text-sm text-slate-400 mt-1">Pantau batas pengeluaranmu dari budget.</p>
                     </div>
                     <Button variant="outline" size="sm" className="h-8 gap-1 text-xs border-white/20 hover:bg-white/10" onClick={() => setIsModalOpen(true)}>
                       <Plus className="w-3.5 h-3.5" /> Budget

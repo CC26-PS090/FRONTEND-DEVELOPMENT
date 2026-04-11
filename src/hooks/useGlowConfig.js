@@ -28,16 +28,19 @@ export function useGlowConfig(variant = 'desktop') {
 
   return useMemo(() => ({
     edgeSensitivity: 30,
-    backgroundColor: isDark ? '#060010' : '#ffffff',
+    // Pure dark background for dark mode, white for light mode
+    backgroundColor: isDark ? '#050505' : '#ffffff',
     borderRadius: isMobile ? 16 : 20,
     glowRadius: isMobile ? 60 : 80,
     coneSpread: 45,
     animated: false,
-    // Theme-aware glow
-    glowColor: isDark ? '40 80 80' : '260 65 70',
-    glowIntensity: isDark ? 3 : 1.8,
+    
+    // Theme-aware glow logic
+    // Light mode uses higher intensity and bolder colors to remain visible on bright backgrounds.
+    glowColor: isDark ? '40 80 80' : '280 80 60',
+    glowIntensity: isDark ? 3 : 5,
     colors: isDark
-      ? ['#c084fc', '#f472b6', '#38bdf8']   // vibrant purple / pink / cyan
-      : ['#a78bfa', '#f9a8d4', '#67e8f9'],   // softer violet / rose / sky
+      ? ['#c084fc', '#f472b6', '#38bdf8']   // vibrant purple / pink / cyan for dark mode
+      : ['#7c3aed', '#db2777', '#0284c7'],   // bolder violet / deep pink / strong blue for light mode
   }), [isDark, isMobile]);
 }

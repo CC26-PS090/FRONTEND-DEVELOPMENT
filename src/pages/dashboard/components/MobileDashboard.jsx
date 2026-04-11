@@ -32,11 +32,11 @@ export default function MobileDashboard() {
     );
   }
 
-  // Only show last 7 days for compact mobile chart
-  const mobileChartData = chartData.slice(0, 7);
+  // Only show last 7 weeks for compact mobile chart
+  const mobileChartData = chartData.slice(-7);
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-4 max-w-xl mx-auto w-full space-y-5 animate-in fade-in zoom-in-95 duration-300 pb-32 transition-colors" id="snap-main-container">
+    <div className="min-h-screen bg-background text-foreground p-4 max-w-xl mx-auto w-full space-y-5 animate-in fade-in zoom-in-95 duration-300 pb-32 overflow-x-hidden transition-colors" id="snap-main-container">
       <AnimatedContent distance={30} delay={0.1} direction="vertical">
         <header className="flex justify-between items-center">
           <div>
@@ -110,7 +110,7 @@ export default function MobileDashboard() {
       {/* Cash Flow Chart */}
       <AnimatedContent distance={40} delay={0.4} direction="vertical">
         <div className="space-y-3">
-          <h2 className="text-sm font-bold px-1">Tren Arus Kas</h2>
+          <h2 className="text-sm font-bold px-1">Grafik Keuangan</h2>
           <BorderGlow {...GLOW}>
             <div className="pt-4">
               <div className="h-[200px] w-full">

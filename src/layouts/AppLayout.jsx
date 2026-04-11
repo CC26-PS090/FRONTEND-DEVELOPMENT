@@ -2,7 +2,7 @@ import { Outlet, NavLink } from 'react-router-dom';
 import { Home, Receipt, PlusCircle, Plus, WalletCards, User, Store, PieChart, UserCircle, HandCoins, Target, RefreshCw, ShoppingCart, Users, Bell, MoreHorizontal } from 'lucide-react';
 import { useMode } from '../contexts/ModeContext';
 import { useConfirm } from '../contexts/ConfirmContext';
-import AIChatBot from '../components/chat/AIChatBot';
+
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -116,7 +116,7 @@ export default function AppLayout() {
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto pb-28 md:pb-0 relative bg-background">
         {/* Mobile Toggle */}
-        <div className="md:hidden absolute top-4 right-4 z-50">
+        <div className="md:hidden absolute top-4 right-4 z-30">
           <button onClick={handleToggleMode} className={`flex items-center gap-2 px-3 py-2 rounded-full shadow-lg text-xs font-bold text-white transition-all active:scale-95 ${modeColor}`}>
             {isPersonal ? <><User className="w-3.5 h-3.5" /> {"Personal"}</> : <><Store className="w-3.5 h-3.5" /> {"UMKM"}</>}
           </button>
@@ -208,7 +208,7 @@ export default function AppLayout() {
           </div>
         </nav>
       </div>
-      <AIChatBot />
+
     </div>
   );
 }

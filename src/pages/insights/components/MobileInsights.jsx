@@ -28,9 +28,9 @@ export default function MobileInsights() {
   const trendData = chartData.map((curr, idx, arr) => {
     const prev = idx > 0 ? arr[idx - 1] : { expense: 0 };
     return {
-      name: curr.month,
-      lastMonth: Number(prev.expense),
-      thisMonth: Number(curr.expense)
+      name: curr.period,
+      lastPeriod: Number(prev.expense),
+      thisPeriod: Number(curr.expense)
     };
   });
   // Top Expenses
@@ -95,12 +95,12 @@ export default function MobileInsights() {
     );
   }
   return (
-    <div className="w-full max-w-7xl mx-auto px-8 py-10 space-y-8 animate-in fade-in zoom-in-95 duration-500 relative bg-background text-foreground transition-colors" id="snap-main-container">
+    <div className="min-h-screen bg-background text-foreground p-4 max-w-xl mx-auto w-full space-y-5 animate-in fade-in zoom-in-95 duration-300 pb-32 overflow-x-hidden transition-colors" id="snap-main-container">
       {/* Header Halaman */}
       <AnimatedContent distance={30} delay={0.1} direction="vertical">
-        <header className="flex justify-between items-end">
+        <header className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight">
+            <h1 className="text-xl font-bold tracking-tight">
               {"Insight"}
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
@@ -115,9 +115,9 @@ export default function MobileInsights() {
         </header>
       </AnimatedContent>
       {/* Grid Utama */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-4">
         {/* Kolom Kiri */}
-        <div className="space-y-6 flex flex-col h-full">
+        <div className="space-y-4 flex flex-col h-full">
           {/* Insight Card */}
           <AnimatedContent distance={40} delay={0.2} direction="vertical">
             <BorderGlow {...GLOW} colors={isPersonal ? ['#a855f7', '#c084fc', '#e879f9'] : ['#3b82f6', '#6366f1', '#38bdf8']}>
@@ -136,7 +136,7 @@ export default function MobileInsights() {
           {/* Donut Chart */}
           <AnimatedContent distance={40} delay={0.3} direction="vertical" className="flex flex-col flex-1 min-h-[350px]">
             <BorderGlow {...GLOW} className="flex-1">
-              <div className="p-6 flex flex-col flex-1">
+              <div className="p-4 flex flex-col flex-1">
                 <h3 className="text-base font-bold">{"Distribusi Kategori"}</h3>
                 <p className="text-sm text-slate-400 mt-1">
                   {"Berdasarkan pengeluaran"} Rp{(totalExpense/1000000).toFixed(1)} Juta
@@ -193,19 +193,19 @@ export default function MobileInsights() {
           </AnimatedContent>
         </div>
         {/* Kolom Kanan */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 gap-4">
             {/* Trend Chart */}
             <AnimatedContent distance={40} delay={0.5} direction="vertical" className="flex flex-col h-full">
               <BorderGlow {...GLOW} className="flex-1">
-                <div className="p-6 flex flex-col flex-1">
+                <div className="p-4 flex flex-col flex-1">
                   <div className="flex justify-between items-center mb-1">
-                    <h3 className="text-base font-bold">{"Tren Arus Kas"}</h3>
+                    <h3 className="text-base font-bold">{"Grafik Keuangan"}</h3>
                     <div className="flex items-center gap-1 text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full">
                       <TrendingDown className="w-3.5 h-3.5" /> 15% {"Lebih Hemat"}
                     </div>
                   </div>
-                  <p className="text-sm text-slate-400 mb-4">{"Bulan ini vs Bulan lalu"}</p>
+                  <p className="text-sm text-slate-400 mb-4">{"Minggu ini vs Minggu lalu"}</p>
                   <div className="h-[220px] w-full flex-1">
                     <TrendBarChart data={trendData} />
                   </div>
@@ -215,7 +215,7 @@ export default function MobileInsights() {
             {/* Monthly Report Card */}
             <AnimatedContent distance={40} delay={0.6} direction="vertical" className="flex flex-col h-full">
               <BorderGlow {...GLOW} colors={['#3b82f6', '#6366f1', '#8b5cf6']} className="flex-1">
-                <div className="p-6 flex flex-col flex-1 justify-between">
+                <div className="p-4 flex flex-col flex-1 justify-between">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-base font-bold flex items-center gap-2">
                       <FileText className="w-5 h-5 text-blue-400" />
@@ -244,17 +244,17 @@ export default function MobileInsights() {
               </BorderGlow>
             </AnimatedContent>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-4">
             {/* Top Expenses */}
             <AnimatedContent distance={40} delay={0.7} direction="vertical" className="flex flex-col h-full">
               <BorderGlow {...GLOW} className="flex-1">
-                <div className="p-6 flex flex-col flex-1">
+                <div className="p-4 flex flex-col flex-1">
                   <div className="mb-1">
                     <h3 className="text-base font-bold flex items-center gap-2">
                       <Receipt className="w-5 h-5 text-slate-400" />
-                      {"Top 5 Pengeluaran"}
+                      {"5 Pengeluaran Teratas"}
                     </h3>
-                    <p className="text-sm text-slate-400 mt-1">{"Pengeluaran terbesar bulan ini"}</p>
+                    <p className="text-sm text-slate-400 mt-1">{"Yang paling bikin boros bulan ini"}</p>
                   </div>
                   <div className="space-y-3 mt-4 flex-1">
                     {topExpenses.map((trx, idx) => (
@@ -276,7 +276,7 @@ export default function MobileInsights() {
             {/* Tracker */}
             <AnimatedContent distance={40} delay={0.8} direction="vertical" className="flex flex-col h-full">
               <BorderGlow {...GLOW} className="flex-1">
-                <div className="p-6 flex flex-col flex-1">
+                <div className="p-4 flex flex-col flex-1">
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h3 className="text-base font-bold flex items-center gap-2">

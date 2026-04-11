@@ -14,7 +14,7 @@ export default function CashFlowAreaChart({ data, isMobile = false }) {
           </linearGradient>
         </defs>
         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isMobile ? "currentColor" : "var(--border)"} className={isMobile ? "opacity-10" : ""} opacity={isMobile ? undefined : 0.6} />
-        <XAxis dataKey={isMobile ? "day" : "month"} axisLine={false} tickLine={false} tick={{fill: 'currentColor', fontSize: isMobile ? 10 : 11}} className={isMobile ? "opacity-50" : "text-muted-foreground"} dy={10} />
+        <XAxis dataKey="period" axisLine={false} tickLine={false} tick={{fill: 'currentColor', fontSize: isMobile ? 10 : 11}} className={isMobile ? "opacity-50" : "text-muted-foreground"} dy={10} />
         <YAxis axisLine={false} tickLine={false} tick={{fill: 'currentColor', fontSize: isMobile ? 10 : 11}} className={isMobile ? "opacity-50" : "text-muted-foreground"} dx={isMobile ? 0 : -5} tickFormatter={(val) => isMobile ? `${val/1000000}M` : `Rp${val/1000}k`} />
         <Tooltip 
           contentStyle={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', color: 'var(--foreground)', borderRadius: '8px', fontSize: '12px' }}

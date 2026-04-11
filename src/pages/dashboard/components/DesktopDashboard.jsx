@@ -66,7 +66,7 @@ export default function DesktopDashboard() {
   }
 
   return (
-    <div className="min-h-full bg-background text-foreground p-8 font-sans w-full animate-in fade-in duration-300 transition-colors" id="snap-main-container">
+    <div className="min-h-full bg-background text-foreground p-8 font-sans w-full overflow-x-hidden animate-in fade-in duration-300 transition-colors" id="snap-main-container">
       <AnimatedContent distance={30} delay={0.1} direction="vertical">
         <header className="flex justify-between items-center mb-8 gap-4 px-2">
           <div>
@@ -115,7 +115,7 @@ export default function DesktopDashboard() {
                       <h2 className="text-xl xl:text-2xl font-black mb-2 truncate">{formatIDR(summary.balance)}</h2>
                       <div className={`flex items-center gap-1.5 text-[11px] font-bold px-2 py-1 rounded-full w-max mt-1 ${balanceChange >= 0 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
                         {balanceChange >= 0 ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                        <span>{balanceChange >= 0 ? '+' : ''}{balanceChange}% bulan ini</span>
+                        <span>{balanceChange >= 0 ? '+' : ''}{balanceChange}% minggu ini</span>
                       </div>
                     </div>
                     <div className="w-24 h-12 ml-2">
@@ -137,7 +137,7 @@ export default function DesktopDashboard() {
                       <h2 className="text-2xl font-black mb-2">{formatIDR(summary.total_income)}</h2>
                       <div className={`flex items-center gap-1.5 text-[11px] font-bold px-2 py-1 rounded-full w-max mt-1 ${incomeChange >= 0 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
                         {incomeChange >= 0 ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                        <span>{incomeChange >= 0 ? '+' : ''}{incomeChange}% bulan ini</span>
+                        <span>{incomeChange >= 0 ? '+' : ''}{incomeChange}% minggu ini</span>
                       </div>
                     </div>
                     <div className="w-24 h-12 ml-2">
@@ -159,7 +159,7 @@ export default function DesktopDashboard() {
                       <h2 className="text-2xl font-black mb-2">{formatIDR(summary.total_expense)}</h2>
                       <div className={`flex items-center gap-1.5 text-[11px] font-bold px-2 py-1 rounded-full w-max mt-1 ${expenseChange <= 0 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
                         {expenseChange <= 0 ? <ArrowDownRight className="w-3 h-3" /> : <ArrowUpRight className="w-3 h-3" />}
-                        <span>{expenseChange >= 0 ? '+' : ''}{expenseChange}% bulan ini</span>
+                        <span>{expenseChange >= 0 ? '+' : ''}{expenseChange}% minggu ini</span>
                       </div>
                     </div>
                     <div className="w-24 h-12 ml-2">
@@ -177,7 +177,7 @@ export default function DesktopDashboard() {
               <BorderGlow {...GLOW} className="flex-1">
                 <div className="p-6 flex flex-col flex-1">
                   <div className="flex justify-between items-center mb-6 shrink-0">
-                    <h3 className="text-sm font-bold">Tren Arus Kas</h3>
+                    <h3 className="text-sm font-bold">Grafik Keuangan</h3>
                     <div className="flex gap-4 text-xs font-bold text-muted-foreground">
                       <span className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-emerald-500 shadow-sm"></div>Pemasukan</span>
                       <span className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-rose-500 shadow-sm"></div>Pengeluaran</span>
