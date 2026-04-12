@@ -1,0 +1,327 @@
+KASFLOW FRONTEND DOCUMENTATION
+Stack: React 18 + Vite + Tailwind CSS + Recharts + Shadcn/UI
+Repo: https://github.com/CC26-PS090/FRONTEND-DEVELOPMENT.git
+Deploy: Vercel (auto-deploy dari branch main)
+
+=========================================================
+ARSITEKTUR UMUM
+=========================================================
+
+STRUKTUR FOLDER:
+  src/
+    ├── App.jsx                ← Entry point, render AppRouter
+    ├── config/constants.js    ← Konstanta global (API URL, tipe transaksi, label)
+    ├── routes/AppRouter.jsx   ← Definisi semua rute (lazy-loaded)
+    ├── layouts/AppLayout.jsx  ← Layout utama: sidebar desktop + bottom nav mobile
+    ├── contexts/              ← React Context providers
+    ├── hooks/                 ← Custom hooks (data fetching & state)
+    ├── services/              ← Axios service layer (1 file per resource)
+    ├── utils/                 ← Utilitas murni (format mata uang, tanggal, export)
+    ├── components/            ← Komponen reusable (UI, chart, transaksi)
+    └── pages/                 ← Halaman fitur (1 folder per modul)
+
+DESIGN PATTERN:
+  - Mobile-first responsive. Setiap halaman punya komponen Desktop dan Mobile terpisah.
+  - Setiap folder halaman punya index.jsx yang memilih Desktop/Mobile via useMediaQuery.
+  - Data fetching terpusat di custom hooks (hooks/) yang memanggil services/.
+  - Services/ hanya bicara ke Axios instance (services/api.js), tidak pernah langsung fetch.
+  - Semua UI text menggunakan Bahasa Indonesia yang ramah dan awam.
+
+ENVIRONMENT VARIABLES:
+  - VITE_API_URL: Base URL backend API (default: http://localhost:3000/api/v1)
+  - Konfigurasi di file .env atau Vercel Environment Variables.
+
+=========================================================
+1. KONFIGURASI AXIOS (services/api.js)
+=========================================================
+
+Instance Axios global. Otomatis menambahkan:
+  - Header Authorization: Bearer <token> dari localStorage('kasflow_token')
+  - Header X-Profile-Type: personal | business dari localStorage('kasflow-mode')
+  - Timeout: 10 detik
+  - Auto redirect ke /login jika dapat response 401
+
+Token & user disimpan di localStorage:
+  - kasflow_token: access token dari Supabase OAuth
+  - kasflow_user: JSON string data user
+  - kasflow-mode: "personal" | "umkm"
+
+=========================================================
+2. ROUTING (routes/AppRouter.jsx)
+=========================================================
+
+Semua halaman fitur menggunakan lazy loading (React.lazy + Suspense).
+
+RUTE PUBLIK:
+  /                  → Landing page
+  /login             → Halaman login (redirect ke OAuth)
+  /auth/callback     → Callback handler setelah OAuth berhasil
+
+RUTE INTERNAL (di dalam AppLayout):
+  /dashboard         → Dashboard utama (ringkasan keuangan)
+  /transactions      → Daftar transaksi
+  /add               → Form catat transaksi baru (+ OCR struk)
+  /insights          → Analisis & insight keuangan
+  /gamification      → Halaman gamification / level XP
+  /profile           → Profil pengguna
+  /profile/settings  → Pengaturan akun
+  /profile/about     → Tentang KasFlow
+  /debts             → Catatan hutang & piutang
+  /goals             → Tujuan keuangan (tabungan)
+  /recurring         → Transaksi berulang otomatis
+  /pos               → Kasir / Point of Sale (khusus mode UMKM)
+  /members           → Anggota tim profil bisnis (khusus mode UMKM)
+  /notifications     → Notifikasi global
+
+FALLBACK:
+  /*                 → Redirect ke / (landing)
+
+=========================================================
+3. CONTEXTS (contexts/)
+=========================================================
+
+AuthContext.jsx
+  - Menyimpan state user & token.
+  - Menyediakan fungsi login, logout, isAuthenticated.
+  - Dipakai oleh AppRouter untuk proteksi rute.
+
+ModeContext.jsx
+  - Mengelola mode aktif: personal | umkm.
+  - Menyimpan pilihan di localStorage('kasflow-mode').
+  - Menyediakan fungsi toggleMode() dan state theme (dark/light).
+  - Dipakai oleh AppLayout untuk tampilan warna & navigasi sesuai mode.
+
+ConfirmContext.jsx
+  - Menyediakan dialog konfirmasi global (pengganti window.confirm).
+  - Komponen AlertDialog dari Shadcn/UI.
+  - Dipakai lewat hook useConfirm() → confirmDialog({ title, description, onConfirm }).
+
+=========================================================
+4. SERVICES (services/)
+=========================================================
+
+Setiap service adalah objek dengan method async yang memanggil api.js.
+Format umum: service.method() → return response.data.data
+
+  api.js                ← Axios instance + interceptors
+  auth.service.js       ← Login OAuth (Google), getMe, logout
+  dashboard.service.js  ← getSummary, getChart, getRecentTransactions, getTopCategories
+  transaction.service.js← getAll, getById, create, update, delete, scanReceipt (OCR)
+  category.service.js   ← getAll, create, update, delete
+  budget.service.js     ← getAll, create, update, delete
+  debt.service.js       ← getAll, create, update, pay, delete
+  goal.service.js       ← getAll, create, update, delete
+  recurring.service.js  ← getAll, create, update, delete
+  profile.service.js    ← getAll, create, update, delete, setDefault
+  member.service.js     ← getAll, invite, accept, remove
+  notification.service.js ← getAll
+  product.service.js    ← getAll, getById, create, update, adjustStock, delete
+  customer.service.js   ← getAll, getById, create, update, delete
+  pos.service.js        ← orders (create, getAll, getById, cancel, receipt)
+                           payment methods (getAll, create, delete)
+                           vouchers (getAll, create, update, delete, validate)
+                           sales report (get)
+  report.service.js     ← getReport, exportCSV, exportPDF
+
+=========================================================
+5. HOOKS (hooks/)
+=========================================================
+
+Custom hooks untuk data fetching. Otomatis fetch saat mount via useEffect.
+Mengembalikan state { data, loading, error } + fungsi CRUD.
+
+  useBudgets.js     ← Budget per bulan/tahun
+  useCategories.js  ← Kategori income/expense
+  useDebts.js       ← Hutang & piutang
+  useGoals.js       ← Tujuan keuangan
+  useMembers.js     ← Anggota tim profil bisnis
+  useNotifications.js ← Notifikasi global
+  useOCR.js         ← Scan struk via kamera/file
+  usePOS.js         ← State kasir: products, cart, addToCart, placeOrder, dll
+  useProfiles.js    ← Financial profiles CRUD + switch default
+  useRecurring.js   ← Transaksi berulang
+  useTransactions.js← Transaksi + search
+  useMediaQuery.js  ← Deteksi layar mobile/desktop (breakpoint md: 768px)
+  useGlowConfig.js  ← Konfigurasi efek glow (BorderGlow) berdasarkan mode & theme
+
+Dashboard punya hook tersendiri di pages/dashboard/hooks/:
+  useDashboardData.js ← Menggabungkan 4 API call dashboard + computed analytics
+                        (healthScore, incomeChange, expenseChange, sparkline data)
+
+=========================================================
+6. KOMPONEN (components/)
+=========================================================
+
+UI PRIMITIF (components/ui/):
+  Berbasis Shadcn/UI. File-file ini di-generate lalu dikustomisasi.
+  - button.jsx, card.jsx, input.jsx, select.jsx
+  - alert-dialog.jsx      ← Dipakai oleh ConfirmContext
+  - dropdown-menu.jsx      ← Menu dropdown
+  - sonner.jsx             ← Toast notification (library Sonner)
+  - chart.jsx              ← Wrapper Recharts dari Shadcn
+  - AnimatedContent.jsx    ← Animasi masuk (fade-in, slide) untuk konten
+  - BorderGlow.jsx         ← Efek glow border animasi (dekorasi card premium)
+  - FloatingLines.jsx      ← Animasi garis mengambang untuk landing page
+
+CHART (components/charts/):
+  - CashFlowAreaChart.jsx  ← Area chart arus kas (income vs expense per minggu)
+  - TrendBarChart.jsx      ← Bar chart tren mingguan (pemasukan vs pengeluaran)
+  - CategoryPieChart.jsx   ← Pie chart distribusi kategori pengeluaran (Dashboard)
+  - DistributionPieChart.jsx ← Pie chart distribusi pengeluaran (Insight)
+  - SparklineChart.jsx     ← Mini sparkline untuk kartu ringkasan
+
+  Catatan: Semua chart menggunakan CustomTooltip agar teks terlihat di dark mode.
+  Catatan: Data chart dashboard sudah menggunakan resolusi mingguan (bukan bulanan).
+
+TRANSAKSI (components/transactions/):
+  - TransactionCard.jsx    ← Card item transaksi (icon, kategori, jumlah, tanggal)
+  - TransactionSearchBox.jsx ← Input pencarian transaksi
+  - TransactionExportMenu.jsx ← Dropdown menu export (PDF/CSV)
+
+AUTH (components/auth/):
+  - ProtectedRoute.jsx     ← Wrapper route yang redirect ke /login jika belum login
+
+=========================================================
+7. HALAMAN (pages/)
+=========================================================
+
+Setiap halaman punya struktur:
+  pages/<nama>/
+    ├── index.jsx              ← Pemilih Desktop/Mobile via useMediaQuery
+    ├── components/
+    │   ├── Desktop<Nama>.jsx  ← Tampilan desktop (sidebar layout)
+    │   └── Mobile<Nama>.jsx   ← Tampilan mobile (bottom nav layout)
+    └── hooks/                 ← Hook khusus halaman (opsional)
+
+DAFTAR HALAMAN:
+
+  Landing.jsx       ← Landing page publik (hero, fitur, CTA login)
+  Login.jsx         ← Redirect ke Google/GitHub OAuth
+  auth/             ← OAuthCallback handler (simpan token ke localStorage)
+
+  dashboard/        ← Ringkasan keuangan: saldo, pemasukan, pengeluaran, grafik, riwayat
+                       Kartu: Total Saldo Aktif, Pemasukan, Pengeluaran
+                       Grafik: CashFlowAreaChart (mingguan), CategoryPieChart
+                       Sections: Grafik Keuangan, Riwayat Transaksi Terbaru
+
+  transactions/     ← Daftar semua transaksi + pencarian + export PDF/CSV
+
+  add-transaction/  ← Form input transaksi baru
+                       Fitur: pilih tipe (income/expense), kategori, jumlah, tanggal, catatan
+                       Fitur: scan struk via OCR (upload gambar → auto-fill jumlah & tanggal)
+
+  insights/         ← Analisis mendalam keuangan
+                       Distribusi Kategori (pie chart)
+                       Grafik Keuangan (trend bar chart mingguan)
+                       Laporan Bulanan (pemasukan, pengeluaran, laba bersih)
+                       5 Pengeluaran Teratas
+                       Anggaran Kategori (budget vs realisasi)
+                       Gamification card (level, XP)
+                       Smart Insight (rekomendasi bahasa Indonesia)
+
+  debts/            ← CRUD hutang (payable) dan piutang (receivable)
+                       Fitur: catat, bayar/cicil, hapus
+
+  goals/            ← CRUD tujuan keuangan / tabungan
+                       Fitur: progress bar, tambah saldo, deadline
+
+  recurring/        ← CRUD transaksi berulang otomatis
+                       Frekuensi: harian, mingguan, bulanan, tahunan
+
+  pos/              ← Kasir / Point of Sale (khusus mode UMKM)
+                       Grid produk, keranjang, checkout, tambah produk baru
+                       Mobile: bottom sheet cart, floating cart button
+
+  members/          ← Manajemen anggota tim profil bisnis
+                       Invite via email, role (owner/editor/viewer), hapus
+
+  notifications/    ← Notifikasi global dari backend
+                       Status "sudah dibaca" dikelola via localStorage (bukan backend)
+
+  profile/          ← Profil pengguna, kelola financial profiles, pengaturan
+  gamification/     ← Halaman detail level & XP (terhubung dengan insight)
+
+=========================================================
+8. LAYOUT (layouts/AppLayout.jsx)
+=========================================================
+
+Layout utama yang membungkus semua rute internal.
+
+DESKTOP (≥768px):
+  - Sidebar kiri fixed: logo, mode switcher, navigasi, tombol catat transaksi
+  - Main content area di kanan (scrollable)
+
+MOBILE (<768px):
+  - Tombol switch mode (Personal/UMKM) di pojok kanan atas (absolute, z-30)
+  - Bottom navigation bar (fixed, rounded, glassmorphism):
+    Beranda | Transaksi | [+FAB] | Insight | Lainnya (dropdown)
+  - FAB (Floating Action Button) di tengah untuk catat transaksi cepat
+  - Menu "Lainnya" berisi: Hutang, Goals, Recurring, POS, Members, Notifikasi, Profil
+
+=========================================================
+9. UTILITAS (utils/)
+=========================================================
+
+currency.js
+  - formatIDR(amount): Format angka ke "Rp 1.500.000"
+
+date.js
+  - formatDate(dateStr): Format tanggal ke locale id-ID (contoh: "12 Apr 2026")
+
+export.js
+  - handleExportPDF(transactions): Generate & download PDF laporan transaksi
+  - handleExportCSV(transactions): Generate & download file CSV transaksi
+
+=========================================================
+10. KONFIGURASI (config/constants.js)
+=========================================================
+
+Konstanta yang dipakai di seluruh aplikasi:
+  - APP_NAME: "KasFlow"
+  - API_BASE_URL: dari env VITE_API_URL atau default localhost
+  - TRANSACTION_TYPES: { INCOME, EXPENSE }
+  - TRANSACTION_CATEGORIES: daftar kategori default (untuk fallback)
+  - DATE_FORMATS: { DISPLAY, API }
+  - DEBT_TYPES: { PAYABLE, RECEIVABLE }
+  - DEBT_TYPE_LABELS: { payable: "Hutang", receivable: "Piutang" }
+  - RECURRING_FREQUENCIES: { DAILY, WEEKLY, MONTHLY, YEARLY }
+  - FREQUENCY_LABELS: label Indonesia untuk frekuensi
+  - DISCOUNT_TYPES: { PERCENT, FIXED }
+
+=========================================================
+STYLING & TEMA
+=========================================================
+
+Framework: Tailwind CSS + CSS Variables
+Tema: Dark mode default, light mode tersedia, dikelola via ModeContext.
+Warna Mode:
+  - Personal: ungu (purple-600 sebagai aksen)
+  - UMKM/Bisnis: biru (blue-600 sebagai aksen)
+Font: Inter (Google Fonts)
+Efek Visual:
+  - BorderGlow: animasi cahaya border pada card (warna sesuai mode)
+  - AnimatedContent: animasi masuk konten (slide, fade, zoom)
+  - Glassmorphism pada bottom navigation bar mobile
+
+=========================================================
+CATATAN PENTING
+=========================================================
+
+1. Semua text UI menggunakan Bahasa Indonesia yang santai dan mudah dipahami.
+   Contoh: "Yang paling bikin boros bulan ini", "Grafik Keuangan", "Laba Bersih".
+
+2. Chart dashboard menggunakan resolusi MINGGUAN.
+   Data datang dari backend dengan field "period" berformat "DD MMM" (contoh: "06 Apr").
+
+3. Bottom navigation mobile menggunakan posisi fixed bottom-6 dengan z-50.
+   Setiap halaman mobile harus punya padding-bottom minimal pb-32 agar konten
+   tidak tertutup navigation bar.
+
+4. Tombol switch mode (Personal/UMKM) di mobile menggunakan z-30.
+   Halaman yang punya tombol/aksi di header kanan harus memberi margin (mr-24)
+   agar tidak bertabrakan dengan tombol switch.
+
+5. OCR struk tersedia di halaman tambah transaksi. Upload gambar struk,
+   backend memproses via API, lalu auto-fill jumlah dan tanggal.
+
+6. Komponen AIChatBot sudah dihapus dari project. Tidak ada fitur AI chatbot.
